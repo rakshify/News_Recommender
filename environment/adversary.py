@@ -2,9 +2,8 @@ import numpy as np, random
 
 
 class Adversary:
-	def __init__(self, w_star, X, model = "logistic", log_bias = None, link_func=lambda x: exp(x)/(1+exp(x))):
+	def __init__(self, w_star, X, model = "logistic", log_bias = None):
 		self.w_star_ = w_star
-		self.link = link_func
 		self.log_bias_ = log_bias
 		self.a_star_reward = np.amax(self.log_bias_)
 

@@ -14,12 +14,11 @@ class GLMUCB(Policy):
         GLM-UCB algorithm given by Filippi et al. in ICML-2013. Parametric Bandits.
         Default link function is logistic (exp(x) / (1+exp(x)))
     """
-    def __init__(self, contexts, link_func=lambda x: exp(x)/(1+exp(x))):
+    def __init__(self, contexts):
         super(GLMUCB, self).__init__(contexts)
         self.name = 'GLM-UCB'
         self.t = 1
         self.total_arms, self.d = contexts.shape
-        self.link = link_func
         self.M_ = np.eye(self.d)
         self.M_inv_ = np.eye(self.d)
         self.rewards = []
@@ -127,3 +126,9 @@ class GLMUCB(Policy):
             to_sum.append((R_k - mu_k) * m_ak)
 
         return np.sum(to_sum, 0)
+
+    def link(self, x):
+        try:
+            return 1 / (1 + exp(-x))
+        except:
+            return exp(x) / (1 + exp(x))

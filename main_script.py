@@ -27,7 +27,7 @@ for ro in range(1, 11, 10):
 	regret = 0.0
 	avg_regret = 0.0
 
-	for t in range(1000):
+	for t in range(10000):
 		contexts = X
 		ch = model.predict_arm(contexts)
 		reward, reg = adv.get_adversary_reward(ch)
@@ -42,7 +42,7 @@ for ro in range(1, 11, 10):
 	print avg_regret
 	# print dist_diff[-1]
 	labels.append("ro = " + str(ro))
-	lines[i], = plt.plot(range(1, 1001), yp, label = labels[i], color = colors[i])
+	lines[i], = plt.plot(range(1, 10001), yp, label = labels[i], color = colors[i])
 	y_plot.append([yp[ypi] / (ypi + 1) for ypi in range(len(yp))])
 	# y_plot.append(dist_diff)
 plt.ylabel("Cumulative regret")
@@ -52,7 +52,7 @@ plt.subplot(212)
 i = -1
 for yp in y_plot:
 	i += 1
-	lines[i], = plt.plot(range(1, 1001), yp, label = labels[i], color = colors[i])
+	lines[i], = plt.plot(range(1, 10001), yp, label = labels[i], color = colors[i])
 plt.ylabel("Average regret")
 plt.xlabel("time steps")
 plt.legend()
