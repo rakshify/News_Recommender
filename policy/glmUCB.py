@@ -43,7 +43,7 @@ class GLMUCB(Policy):
         """
         for i in range(self.total_arms):  # initialize
             if self.pulls[i] == 0:
-                return arm
+                return i
 
         theta_hat = scipy.optimize.root(self.__to_optimize,
                                         self.prev).x
@@ -73,7 +73,7 @@ class GLMUCB(Policy):
         X = contexts[arm].flatten()
         self.rewards.append(reward)
         self.context.append(X)
-        self.M_ += np.outer(feat, feat)
+        self.M_ += np.outer(X, X)
         self.M_inv_ = np.linalg.inv(self.M_)
         self.pulls[arm] += 1
         self.t += 1

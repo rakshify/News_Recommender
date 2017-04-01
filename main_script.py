@@ -1,8 +1,10 @@
 import numpy as np, sys
-sys.path.insert(0, "/home/rakshit/Desktop/Academic/BanditEmpirical-master/")
+sys.path.insert(0, "/home/rakshit/Desktop/Academic/ms_codefundo/News_Recommender/policy/")
+sys.path.insert(0, "/home/rakshit/Desktop/Academic/ms_codefundo/News_Recommender/environment/")
 import utilities as utils
-from policy.glmUCB import GLMUCB
-from environment.adversary import Adversary
+from glmUCB import GLMUCB
+from adversary import Adversary
+import matplotlib.pyplot as plt
 
 X, Y, lb = utils.get_data()
 adv = Adversary(Y, X, model = "forest cover", log_bias = lb)
@@ -27,7 +29,7 @@ for ro in range(1, 11, 10):
 
 	for t in range(1000):
 		contexts = X
-		ch = model.predict_arm(contexts, model.acquisition)
+		ch = model.predict_arm(contexts)
 		reward, reg = adv.get_adversary_reward(ch)
 		model.pull_arm(ch, reward, contexts)
 
