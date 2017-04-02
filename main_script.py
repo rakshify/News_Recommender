@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 
 X, Y, lb = utils.get_data()
 adv = Adversary(Y, X, model = "forest cover", log_bias = lb)
-model = GLMUCB(X)
 print "DATA READY"
 
 y_plot = []
@@ -17,11 +16,16 @@ colors = ['red', 'green', 'blue', 'black', 'brown', 'pink', 'orange', 'violet', 
 labels = []
 plt.subplot(211)
 lines = [0 for i in range(1, 11)]
-
+model = None
 i = -1
-for ro in range(1, 11, 10):
+for algo in ["glmUCB", "eps", "oblivious"]:
 	i += 1
-	ro = float(ro) / 1000.0
+	if algo == "glmUCB":
+		model = GLMUCB(X)
+	elif algo == "oblivious":
+		model = Oblivious(X)
+	else:
+		model = EpsilonGreedy(X)
 	yp = []
 	dist_diff = []
 	regret = 0.0
@@ -41,7 +45,7 @@ for ro in range(1, 11, 10):
 
 	print avg_regret
 	# print dist_diff[-1]
-	labels.append("ro = " + str(ro))
+	labels.append("algo = " + str(algo))
 	lines[i], = plt.plot(range(1, 10001), yp, label = labels[i], color = colors[i])
 	y_plot.append([yp[ypi] / (ypi + 1) for ypi in range(len(yp))])
 	# y_plot.append(dist_diff)

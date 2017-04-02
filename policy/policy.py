@@ -12,7 +12,7 @@ class Policy(object):
     def __init__(self, contexts):
         self.contexts = contexts
 
-    def get_arm(self, arms, contexts=None):
+    def predict_arm(self, contexts=None):
         raise NotImplementedError("You need to override this function in child class.")
 
     def pull_arm(self, arm, reward, contexts=None):
