@@ -3,6 +3,9 @@ sys.path.insert(0, "/home/rakshit/Desktop/Academic/ms_codefundo/News_Recommender
 sys.path.insert(0, "/home/rakshit/Desktop/Academic/ms_codefundo/News_Recommender/environment/")
 import utilities as utils
 from glmUCB import GLMUCB
+from linUCB import LinUCB
+from epsilon_greedy import EpsilonGreedy
+from oblivious import Oblivious
 from adversary import Adversary
 import matplotlib.pyplot as plt
 
@@ -18,12 +21,14 @@ plt.subplot(211)
 lines = [0 for i in range(1, 11)]
 model = None
 i = -1
-for algo in ["glmUCB", "eps", "oblivious"]:
+for algo in ["linUCB", "glmUCB", "eps", "oblivious"]:
 	i += 1
 	if algo == "glmUCB":
 		model = GLMUCB(X)
 	elif algo == "oblivious":
 		model = Oblivious(X)
+	elif algo == "linUCB":
+		model = LinUCB(X)
 	else:
 		model = EpsilonGreedy(X)
 	yp = []

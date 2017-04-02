@@ -12,24 +12,25 @@ class LinUCB(Policy):
     """
     LinUCB, as per Li, Chu, Langford, Schapire 2012
     """
-    def __init__(self, arm_list, dim=6, alpha=.01):
-        super(LinUCB, self).__init__(arm_list)
+    def __init__(self, contexts, alpha=.01):
+        super(LinUCB, self).__init__(contexts)
         self.name = 'LinUCB'
         self.t = 1
-        self.d = dim**2
+        # self.d = dim**2
+        self.total_arms, self.d = contexts.shape
         self.A = np.identity(self.d)
         self.b = np.zeros(self.d)
-        self.pulls = {a: 0 for a in arm_list}
+        self.pulls = [0 for i in range(self.total_arms)]
         self.arm_prop = {}
         self.alpha = alpha
 
-    def get_arm(self, arms, context, features):
+    def predict_arm(self, contexts):
         alpha = self.alpha
         beta_hat = np.dot(np.linalg.inv(self.A), self.b)
-        ps = {a: 0 for a in arms}
+        ps = [0 for i in range(self.total_arms)]
 
-        for arm in arms:
-            z = features[arm].flatten()
+        for arm in range(self.total_arms):
+            z = contexts[arm].flatten()
             x = z
 
             if self.pulls[arm] == 0:  # initialize
@@ -47,23 +48,25 @@ class LinUCB(Policy):
             zTA0inv = np.dot(z, A0inv)
             aInv = np.linalg.inv(a_var['A'])
             xTAinv = np.dot(x, aInv)
-            s = (np.dot(zTA0inv, z) -
+            s = abs((np.dot(zTA0inv, z) -
                  2 * np.dot(np.dot(np.dot(zTA0inv, a_var['B']),
                                    aInv), x) +
                  np.dot(xTAinv, x) +
                  np.dot(np.dot(np.dot(np.dot(np.dot(xTAinv,
                                                     a_var['B']), A0inv),
-                                      a_var['B'].T), aInv), x))
-            ps[arm] = (np.dot(z, beta_hat) + np.inner(x, theta_hat) +
-                       alpha * sqrt(s))
+                                      a_var['B'].T), aInv), x)))
+            # print s, alpha, np.inner(x, theta_hat), np.dot(z, beta_hat)
+            ps[arm] = (arm, (np.dot(z, beta_hat) + np.inner(x, theta_hat) +
+                       alpha * sqrt(s)))
+            # print ps[arm]
 
-        return max(ps.items(), key=lambda x: x[1])[0]
+        return max(ps, key=lambda x: x[1])[0]
 
-    def pull_arm(self, arm, feedback, context, features):
+    def pull_arm(self, arm, reward, contexts):
         self.pulls[arm] += 1
-        z = features[arm].flatten()
+        z = contexts[arm].flatten()
         x = z
-        r = feedback
+        r = reward
         B = self.arm_prop[arm]['B']
         aInv = np.linalg.inv(self.arm_prop[arm]['A'])
         b = self.arm_prop[arm]['b']

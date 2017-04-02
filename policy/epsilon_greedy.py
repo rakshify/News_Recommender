@@ -10,7 +10,7 @@ import random
 class EpsilonGreedy(Policy):
     """Standard epsilon greedy, linear regret."""
     def __init__(self, contexts, epsilon=.1):
-        super(EpsilonGreedy, self).__init__(arm_list)
+        super(EpsilonGreedy, self).__init__(contexts)
         self.name = 'EpsilonGreedy({})'.format(epsilon)
         self.ep = epsilon
         self.total_arms, self.d = contexts.shape

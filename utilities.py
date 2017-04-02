@@ -2,10 +2,13 @@ import numpy as np
 from sklearn.cluster import KMeans
 import pickle
 from os.path import exists
+from os import listdir
+from os.path import isfile, join
+
+pkl_dir = "../pickle/"
 
 def get_data():
 	pt = "../dataset/covtype.data"
-	pkl_dir = "../pickle/"
 	if exists(pkl_dir + "arms.p"):
 		return pickle.load(open(pkl_dir + "arms.p")), \
 				pickle.load(open(pkl_dir + "Y.p")), \
@@ -61,3 +64,26 @@ def get_data():
 	pickle.dump(lb, open(pkl_dir + "lb.p", 'wb'))
 
 	return kmeans.cluster_centers_, Y, lb
+
+
+def get_articles(pt):
+	print "reading data"
+	if exists(pkl_dir + "aid.p"):
+		return pickle.load(open(pkl_dir + "aid.p"))
+	aid = {}
+	onlyfiles = [join(pt, f) for f in listdir(pt) if isfile(join(pt, f))]
+	i = 0
+	for file_path in onlyfiles:
+		i += 1
+		with open(file_path, "rb") as f:
+			for line in f:
+				s = [si[3:].strip() for si in line.replace("\n", "").replace("\r", "").split("|")[2:]]
+				for si in s:
+					if si not in aid:
+						aid[si] = 1
+		print "File%d read"%i
+
+	aid = aid.keys()
+	pickle.dump(aid, open(pkl_dir + "aid.p", 'wb'))
+
+	return aid
